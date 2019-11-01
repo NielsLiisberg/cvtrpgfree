@@ -1,0 +1,54 @@
+﻿{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile current file",
+            "command": "ssh -t mensa 'PATH=/QOpenSys/pkgs/bin:$PATH;cd /prj/cvtrpgfree/;gmake ${fileBasename}'",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "owner": "c",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}"
+                ],
+                "pattern": {
+                    "regexp": "^(.*),\\s+(\\d+).(\\d+):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "message": 4
+                }
+            }
+        },
+        {
+            "label": "Build all",
+            "command": "ssh mensa 'PATH=/QOpenSys/pkgs/bin:$PATH;cd /prj/cvtrpgfree/;gmake all'",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build release savefile / zip ",
+            "command": "ssh mensa 'PATH=/QOpenSys/pkgs/bin:$PATH;cd /prj/cvtrpgfree/;gmake release'",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ]
+}

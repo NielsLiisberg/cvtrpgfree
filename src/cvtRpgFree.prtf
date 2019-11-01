@@ -1,0 +1,129 @@
+     A          R Z1PAGHDG
+     A*%%***********************************************************************
+     A*%%RI 00000
+     A*%%***********************************************************************
+     A                                      SKIPB(001)
+     A            Z1ÅPGM        10A  O     1
+     A            Z1ÅUSR        10A  O    20
+     A            Z1ÅTTL        40A       55
+     A*%%***********************************************************************
+     A*%%***********************************************************************
+     A                                   103
+     A                                      DATE
+     A                                      EDTCDE(Y)
+     A                                   113
+     A                                      TIME
+     A                                   123
+     A                                      'Page:'
+     A            Z1ÅPAG         4S 0O    +1
+     A                                      EDTCDE(3)
+     A                                      SKIPB(001)
+      *=========================================================================
+      * Top of Page format.
+     A          R Z1TOPPAG
+     A*%%***********************************************************************
+     A*%%RI 00000
+     A*%%FS 001
+     A*%%***********************************************************************
+     A                                      SPACEB(2)
+     A                                     1
+     A                                      'From source file :'
+     A            ZTFRFL        21A  O    +1
+     A                                     1
+     A                                      'To source file . :'
+     A                                      SPACEB(001)
+     A            ZTTOFL        21A  O    +1
+     A                                    32' Input'
+     A                                      SPACEB(001)
+     A                                    44
+     A                                      'Output'
+     A                                    57'Moved'
+     A                                    69
+     A                                      'Fixed'
+     A                                    75
+     A                                      ' '
+     A                                    95
+     A                                      'Not'
+     A                                   106
+     A                                      'Conv'
+     A                                    14'To Member'
+     A                                      SPACEB(001)
+     A                                    33'Lines'
+     A                                     1
+     A                                      'From Member'
+     A                                    45
+     A                                      'Lines'
+     A*%%***********************************************************************
+     A*%%SS
+     A*%%SN ZTFRDT     99.99.9999
+     A*%%CL 001
+     A*%%SN ZTTODT     99.99.9999
+     A*%%CL 001
+     A*%%CL 001
+     A*%%***********************************************************************
+     A                                    58'Defs'
+     A                                    69'Lines'
+     A                                    77'Converted'
+     A                                    89'Converted'
+     A                                   106'Rate'
+     A*                                  +55'Ratio'
+      *=========================================================================
+      * Level 1 Headings
+     A          R ZL01HDG
+     A*%%***********************************************************************
+     A*%%RI 00000
+     A*%%SS
+     A*%%***********************************************************************
+      *=========================================================================
+      * Detail line
+     A          R Z1DETAIL
+     A*%%***********************************************************************
+     A*%%RI 00000
+     A*%%***********************************************************************
+     A            Z1FRMB        10A  O     1SPACEB(1)
+     A            Z1TOMB        10A       14
+     A            Z1CTSC         7S 0O    29
+     A                                      EDTCDE(2)
+     A            Z1CTTG         7S 0     41EDTCDE(2)
+     A            Z1CTMV         7S 0     53EDTCDE(2)
+     A            Z1CTEL         7S 0     65EDTCDE(2)
+     A            Z1CTCV         7S 0     77EDTCDE(2)
+     A            Z1CTNV         7S 0     89EDTCDE(2)
+     A            Z1CNVR         5S 2O    +4
+     A                                      EDTCDE(3)
+     A                                   109'%'
+      *=========================================================================
+      * End of Report
+     A          R Z1ENDRPT
+     A*%%***********************************************************************
+     A*%%RI 00000
+     A*%%FS 002
+     A*%%***********************************************************************
+     A                                      SPACEB(003)
+     A                                     1
+     A                                      '*** End of Report ***'
+     A                                      HIGHLIGHT
+     A*%%***********************************************************************
+     A*%%SS
+     A*%%CP+999CRTPRTF
+     A*%%CP+    FILE(OÅ00027401/CL129P1)
+     A*%%CP+    DEVTYPE(*SCS)
+     A*%%CP     PAGESIZE(*N       132      *N     )
+     A*%%***********************************************************************
+      *=========================================================================
+     A*%%RS+<record-sequences>
+     A*%%RS+ <sequence name="Untitled">
+     A*%%RS+  <device type="printer" width="132" height="66" />
+     A*%%RS+  <record-write record-format="Z1PAGHDG" />
+     A*%%RS+  <record-write record-format="Z1TOPPAG" />
+     A*%%RS+  <record-write record-format="ZL01HDG" />
+     A*%%RS+  <record-write record-format="Z1DETAIL" />
+     A*%%RS+  <record-write record-format="Z1ENDRPT" />
+     A*%%RS+ </sequence>
+     A*%%RS+ <sequence name="Untitled1">
+     A*%%RS+  <device type="printer" width="132" height="66" />
+     A*%%RS+  <record-write record-format="Z1PAGHDG" />
+     A*%%RS+  <record-write record-format="Z1TOPPAG" />
+     A*%%RS+  <record-write record-format="Z1DETAIL" />
+     A*%%RS+ </sequence>
+     A*%%RS </record-sequences>

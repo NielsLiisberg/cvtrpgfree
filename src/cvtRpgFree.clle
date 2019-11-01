@@ -1,0 +1,179 @@
+/*============================================================================*/
+/* Program Name . . : CVTRPGFREC                                              */
+/* Project Reference:                                                         */
+/* Date Created . . : 08/05/15                                                */
+/* Author . . . . . : Ewarwoowar                                              */
+/* Description  . . : Invokes the Convert RPG Free Program                    */
+/*============================================================================*/
+             PGM        PARM(&FROMMBR &FROMFILLIB &TOFILLIB &TOMBR &INDCMT &RETBLKCMT +
+                          &DIRECTIVES)
+
+/*----------------------------------------------------------------------------*/
+/*  Declare variables                                                         */
+/*----------------------------------------------------------------------------*/
+
+             /* Parameters */
+
+             DCL        VAR(&FROMFILLIB) TYPE(*CHAR) LEN(20)
+             DCL        VAR(&FROMMBR) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TOFILLIB) TYPE(*CHAR) LEN(20)
+             DCL        VAR(&TOMBR) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&INDCMT) TYPE(*CHAR) LEN(1)
+             DCL        VAR(&RETBLKCMT) TYPE(*CHAR) LEN(1)
+             DCL        VAR(&DIRECTIVES) TYPE(*CHAR) LEN(1)
+
+             /* Work Variables */
+
+             DCL        VAR(&FROMFIL) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&FROMLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TOFIL) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TOLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TEXT) TYPE(*CHAR) LEN(50)
+             DCL        VAR(&SRCTYPE) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&EXIT) TYPE(*CHAR) LEN(1)
+
+             /* Standard Error Handling */
+
+             DCL        VAR(&MSG) TYPE(*CHAR) LEN(200)
+             DCL        VAR(&MSGDTA) TYPE(*CHAR) LEN(200)
+             DCL        VAR(&MSGID) TYPE(*CHAR) LEN(7)
+             DCL        VAR(&MSGF) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&MSGL) TYPE(*CHAR) LEN(10)
+
+             MONMSG     MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
+
+/*----------------------------------------------------------------------------*/
+/* Extract the component file names.                                          */
+/*----------------------------------------------------------------------------*/
+             CHGVAR     VAR(&FROMFIL) VALUE(%SST(&FROMFILLIB 1 10))
+             CHGVAR     VAR(&FROMLIB) VALUE(%SST(&FROMFILLIB 11 10))
+             CHGVAR     VAR(&TOFIL) VALUE(%SST(&TOFILLIB 1 10))
+             CHGVAR     VAR(&TOLIB) VALUE(%SST(&TOFILLIB 11 10))
+
+             IF         COND(&TOLIB *EQ '*FROMLIB') THEN(DO)
+                CHGVAR     VAR(&TOLIB) VALUE(&FROMLIB)
+             ENDDO
+
+/*----------------------------------------------------------------------------*/
+/* Create temporary source files.                                             */
+/*----------------------------------------------------------------------------*/
+             CRTSRCPF   FILE(QTEMP/QRPGLESRC) RCDLEN(112)
+             MONMSG     MSGID(CPF7302)
+             CRTSRCPF   FILE(QTEMP/QRPGLESRC2) RCDLEN(112)
+             MONMSG     MSGID(CPF7302)
+
+/*----------------------------------------------------------------------------*/
+/* Processing *ALL members?                                                   */
+/*----------------------------------------------------------------------------*/
+             IF         COND(&FROMMBR *EQ '*ALL') THEN(DO)
+                /* To Member must be *FROMMBR. */
+                IF         COND(&TOMBR *NE '*FROMMBR') THEN(DO)
+                   SNDPGMMSG  MSG('To Member must be ''*FROMMBR'' if From Member is ''*ALL''')
+                   GOTO       CMDLBL(SHTDWN)
+                ENDDO
+
+                /* Get the first member name. */
+                RTVMBRD    FILE(&FROMLIB/&FROMFIL) MBR(*FIRSTMBR) RTNMBR(&FROMMBR) +
+                             SRCTYPE(&SRCTYPE) TEXT(&TEXT)
+                MONMSG     MSGID(CPF3019) EXEC(GOTO CMDLBL(ENDPGM)) /* No members */
+
+                /* Process each member until we run out. */
+                DOUNTIL    COND(&EXIT = 'Y')
+                   CHGVAR     VAR(&TOMBR) VALUE('*FROMMBR')
+                   CALLSUBR   SUBR(PROCESSMBR)
+
+                   /* Get the next member name. */
+                   RTVMBRD    FILE(&FROMLIB/&FROMFIL) MBR(&FROMMBR *NEXT) RTNMBR(&FROMMBR) +
+                                SRCTYPE(&SRCTYPE) TEXT(&TEXT)
+                   MONMSG     MSGID(CPF3049) EXEC(GOTO CMDLBL(SHTDWN)) /* *NEXT does not +
+                                exist */
+                ENDDO
+             ENDDO
+             ELSE       CMD(DO)
+                CALLSUBR   SUBR(PROCESSMBR)
+             ENDDO
+
+/*----------------------------------------------------------------------------*/
+/* Remove temporary source files.                                             */
+/*----------------------------------------------------------------------------*/
+             DLTF       FILE(QTEMP/QRPGLESRC)
+             DLTF       FILE(QTEMP/QRPGLESRC2)
+
+/*============================================================================*/
+/* Standard error handling                                                    */
+/*============================================================================*/
+             GOTO       CMDLBL(SHTDWN)
+ ERROR:
+ MSGD:       RCVMSG     MSGTYPE(*DIAG)    +
+                        MSG(&MSG)         +
+                        MSGDTA(&MSGDTA)   +
+                        MSGID(&MSGID)     +
+                        MSGF(&MSGF)       +
+                        MSGFLIB(&MSGL)
+             IF         COND(&MSGID *NE ' ') THEN(DO)
+             SNDPGMMSG  MSGID(&MSGID)     +
+                        MSGF(&MSGL/&MSGF) +
+                        MSGDTA(&MSGDTA)   +
+                        MSGTYPE(*DIAG)
+             GOTO       CMDLBL(MSGD)
+             ENDDO
+             RCVMSG     MSGTYPE(*EXCP)    +
+                        MSG(&MSG)         +
+                        MSGDTA(&MSGDTA)   +
+                        MSGID(&MSGID)     +
+                        MSGF(&MSGF)       +
+                        MSGFLIB(&MSGL)
+             IF         COND(&MSGID *NE ' ')  +
+                        THEN(SNDPGMMSG        +
+                        MSGID(&MSGID)         +
+                        MSGF(&MSGL/&MSGF)     +
+                        MSGDTA(&MSGDTA)       +
+                        MSGTYPE(*ESCAPE))
+
+             /* Shut Down */
+ SHTDWN:     CALL       PGM(CVTRPGFRER) PARM('Y' &FROMFIL &FROMLIB &FROMMBR &TOFIL &TOLIB +
+                          &TOMBR &INDCMT &RETBLKCMT &DIRECTIVES)
+
+/*============================================================================*/
+             SUBR       SUBR(PROCESSMBR)
+/*----------------------------------------------------------------------------*/
+/* Check the from file and member exists.                                     */
+/*----------------------------------------------------------------------------*/
+                RTVMBRD    FILE(&FROMLIB/&FROMFIL) MBR(&FROMMBR) SRCTYPE(&SRCTYPE) TEXT(&TEXT)
+
+                IF         COND(&TOMBR *EQ '*FROMMBR') THEN(CHGVAR VAR(&TOMBR) VALUE(&FROMMBR))
+
+                IF         COND(&TOMBR *EQ &FROMMBR *AND &FROMFIL *EQ &TOFIL *AND &FROMLIB *EQ +
+                             &TOLIB) THEN(DO)
+                   SNDPGMMSG  MSG('To Member must not be the same as the From Member.')
+                   CHGVAR     VAR(&EXIT) VALUE('Y')
+                   RTNSUBR
+                ENDDO
+
+/*----------------------------------------------------------------------------*/
+/* Check the to file and member doesn't exist.                                */
+/*----------------------------------------------------------------------------*/
+                CHKOBJ     OBJ(&TOLIB/&TOFIL) OBJTYPE(*FILE)
+
+/*----------------------------------------------------------------------------*/
+/* Copy the source to be converted.                                           */
+/*----------------------------------------------------------------------------*/
+                CPYF       FROMFILE(&FROMLIB/&FROMFIL) TOFILE(QTEMP/QRPGLESRC) +
+                             FROMMBR(&FROMMBR) TOMBR(&FROMMBR) MBROPT(*REPLACE) FMTOPT(*MAP +
+                             *DROP)
+                ADDPFM     FILE(QTEMP/QRPGLESRC2) MBR(&TOMBR) TEXT(&TEXT) SRCTYPE(&SRCTYPE)
+
+                CALL       PGM(CVTRPGFRER) PARM('N' &FROMFIL &FROMLIB &FROMMBR &TOFIL &TOLIB +
+                             &TOMBR &INDCMT &RETBLKCMT &DIRECTIVES)
+
+/*----------------------------------------------------------------------------*/
+/* Copy the converted source to the destination member.                       */
+/*----------------------------------------------------------------------------*/
+                CPYF       FROMFILE(QTEMP/QRPGLESRC2) TOFILE(&TOLIB/&TOFIL) FROMMBR(&TOMBR) +
+                             TOMBR(&TOMBR) MBROPT(*REPLACE) FMTOPT(*MAP *DROP)
+
+             ENDSUBR
+/*============================================================================*/
+
+ ENDPGM:     ENDPGM
+/*============================================================================*/
