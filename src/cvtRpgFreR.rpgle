@@ -16,17 +16,17 @@
        //-------------------------------------------------------------------------------------------
        // F I L E S
        //-------------------------------------------------------------------------------------------
-       Dcl-F QRPGLESRC              EXTMBR(ØpFromMbr)
+       Dcl-F QRPGLESRC              EXTMBR(QpFromMbr)
                                     EXTFILE('QTEMP/QRPGLESRC')
                                     RENAME(QRPGLESRC:SRCREC)
                                     USROPN;
 
-       Dcl-F QRPGLESRC2             Usage(*OUTPUT) EXTMBR(ØpToMbr)
+       Dcl-F QRPGLESRC2             Usage(*OUTPUT) EXTMBR(QpToMbr)
                                     EXTFILE('QTEMP/QRPGLESRC2')
                                     RENAME(QRPGLESRC2:OUTREC)
                                     USROPN;
 
-       Dcl-F CVTRPGFRP1     PRINTER USROPN
+       Dcl-F CVTRPGFREP     PRINTER USROPN
                                     OFLIND(overFlow);
 
        //-------------------------------------------------------------------------------------------
@@ -34,39 +34,39 @@
        //-------------------------------------------------------------------------------------------
 
        Dcl-PR CVTRPGFREE               EXTPGM('CVTRPGFREE');
-          ØpShutDown               Char(1) CONST;
-          ØpFromFile               Char(10) CONST;
-          ØpFromLib                Char(10) CONST;
-          ØpFromMember             Char(10) CONST;
-          ØpToFile                 Char(10) CONST;
+          QpShutDown               Char(1) CONST;
+          QpFromFile               Char(10) CONST;
+          QpFromLib                Char(10) CONST;
+          QpFromMember             Char(10) CONST;
+          QpToFile                 Char(10) CONST;
 
-          ØpToLib                  Char(10) CONST;
-          ØpToMbr                  Char(10) CONST;
-          ØpIndComment             Char(1) CONST;
-          ØpRetBlnkCmt             Char(1) CONST;
-          ØpDirectives             Char(1) CONST;
+          QpToLib                  Char(10) CONST;
+          QpToMbr                  Char(10) CONST;
+          QpIndComment             Char(1) CONST;
+          QpRetBlnkCmt             Char(1) CONST;
+          QpDirectives             Char(1) CONST;
        End-PR;
 
        Dcl-PI CVTRPGFREE;
-          ØpShutDown               Char(1) CONST;
-          ØpFromFile               Char(10) CONST;
-          ØpFromLib                Char(10) CONST;
-          ØpFromMbr                Char(10) CONST;
-          ØpToFile                 Char(10) CONST;
-          ØpToLib                  Char(10) CONST;
-          ØpToMbr                  Char(10) CONST;
-          ØpIndComment             Char(1) CONST;
-          ØpRetBlnkCmt             Char(1) CONST;
-          ØpDirectives             Char(1) CONST;
+          QpShutDown               Char(1) CONST;
+          QpFromFile               Char(10) CONST;
+          QpFromLib                Char(10) CONST;
+          QpFromMbr                Char(10) CONST;
+          QpToFile                 Char(10) CONST;
+          QpToLib                  Char(10) CONST;
+          QpToMbr                  Char(10) CONST;
+          QpIndComment             Char(1) CONST;
+          QpRetBlnkCmt             Char(1) CONST;
+          QpDirectives             Char(1) CONST;
        End-PI;
 
        //-------------------------------------------------------------------------------------------
        // P R O T O T Y P E   I N T E R F A C E S
        //-------------------------------------------------------------------------------------------
        Dcl-PR GetDeclarationType;
-          ØpDeclType               Char( 2 );
-          ØpSavedName              Char( 80 );
-          ØpDeclLine                        Like(SRCSEQ);
+          QpDeclType               Char( 2 );
+          QpSavedName              Char( 80 );
+          QpDeclLine                        Like(SRCSEQ);
        End-PR;
 
        //-------------------------------------------------------------------------------------------
@@ -194,11 +194,11 @@
 
        // End of Template variables (required - do not alter).
        //-------------------------------------------------------------------------------------------
-       Dcl-S ØopCodeUP             Char(10) DIM(66) PERRCD(1) CTDATA;
-       Dcl-S ØopCodeLO             Char(10) DIM(66) ALT(ØopCodeUP);
-       Dcl-S ØdeclUP               Char(10) DIM(12) PERRCD(1) CTDATA;
-       Dcl-S ØdeclLO               Char(10) DIM(12) ALT(ØdeclUP);
-       Dcl-S Øcomments             Char(92) DIM(3) CTDATA;
+       Dcl-S QopCodeUP             Char(10) DIM(66) PERRCD(1) CTDATA;
+       Dcl-S QopCodeLO             Char(10) DIM(66) ALT(QopCodeUP);
+       Dcl-S QdeclUP               Char(10) DIM(12) PERRCD(1) CTDATA;
+       Dcl-S QdeclLO               Char(10) DIM(12) ALT(QdeclUP);
+       Dcl-S Qcomments             Char(92) DIM(3) CTDATA;
        Dcl-S x                   Packed(3:0);
        Dcl-S y                   Packed(3:0);
        Dcl-S i                   Packed(3:0);
@@ -452,7 +452,7 @@
           If overFlow;
 
              // Print page headings.
-             Z1ÅPAG += 1;
+             Z1QPAG += 1;
              Write Z1PAGHDG;
 
              ZTFRFL = fromFileLib;
@@ -463,8 +463,8 @@
              overFlow = *Off;
           EndIf;
 
-          Z1FRMB = ØpFromMbr;
-          Z1TOMB = ØpToMbr;
+          Z1FRMB = QpFromMbr;
+          Z1TOMB = QpToMbr;
           Z1CTSC = countSource;
           Z1CTTG = countTarget;
           Z1CTEL = countEligible;
@@ -547,7 +547,7 @@
                    inFreeFormat = *On;
                    lineType = ' ';
                    workLineType = ' ';
-                   If ØpDirectives = 'Y';
+                   If QpDirectives = 'Y';
                       directive = '/Free';
                    Else;
                       dropLine = *On;
@@ -594,7 +594,7 @@
                 and (lineType = *Blank or inCode);
                 //            and inCode;
                 // This is a comment line.
-                If ØpIndComment <> 'Y' or workLineType = 'C';
+                If QpIndComment <> 'Y' or workLineType = 'C';
                    inComment = *On;
                 EndIf;
                 If %subst(workDirective:1:2) = '//';
@@ -607,7 +607,7 @@
                    workLineType = ' ';
                 EndIf;
                 // Retain blank comment markers?
-                If ØpRetBlnkCmt = 'N' and %len(%trim(codeLine)) = 0;
+                If QpRetBlnkCmt = 'N' and %len(%trim(codeLine)) = 0;
                    // Leave the line blank, devoid of any marker.
                 Else;
                    codeLine = '//' + codeLine;
@@ -624,11 +624,11 @@
                 and %subst(%trim(codeLine):1:2) = '//'
                 and (workLineType = *Blank or inCode);
                 // This is a comment line.
-                If ØpIndComment <> 'Y' or workLineType = 'C';
+                If QpIndComment <> 'Y' or workLineType = 'C';
                    inComment = *On;
                 EndIf;
                 // Retain blank comment markers?
-                If ØpRetBlnkCmt = 'N' and %len(%trim(%subst(codeLine:3)))
+                If QpRetBlnkCmt = 'N' and %len(%trim(%subst(codeLine:3)))
                                                   = 0;
                    // Leave the line blank, devoid of any marker.
                    codeLine = *Blanks;
@@ -741,7 +741,7 @@
                    countNotConv -= 1;
                    // Switch to free-format?
                    If not inFreeFormat and not inDeclaration;
-                      If ØpDirectives = 'Y';
+                      If QpDirectives = 'Y';
                          savedSRCDTA = SRCDTA;
                          Clear SRCDTA;
                          directive = '/Free';
@@ -758,7 +758,7 @@
                 or %subst(workDirective:1:5) = '/COPY');
                    //                or  %subst(prefix:1:3) = '** ');        // Array data reached
                    If inFreeFormat and not inDeclaration;
-                      If ØpDirectives = 'Y';
+                      If QpDirectives = 'Y';
                          savedSRCDTA = SRCDTA;
                          Clear SRCDTA;
                          directive = '/End-Free';
@@ -826,11 +826,11 @@
                          EndIf;
                       EndIf;
 
-                      If %lookup(%xlate(lo:up:operator):ØopCodeUP) > 0
+                      If %lookup(%xlate(lo:up:operator):QopCodeUP) > 0
                       and not inDeclaration;
                          inCode = *On;
                       Else;
-                         If %lookup(%xlate(lo:up:operator):ØdeclUP) > 0;
+                         If %lookup(%xlate(lo:up:operator):QdeclUP) > 0;
                             // Declaration!
                          Else;
                             // Not an operator!
@@ -981,13 +981,13 @@
              and not inComment
              and not dropLine;       //  and not inSpan
                 // Derive reformatted opcode (if any)
-                x = %lookup(operator:ØopCodeUP);
+                x = %lookup(operator:QopCodeUP);
                 If x > 0;
-                   newOperator = %trim(ØopCodeLO(x));
+                   newOperator = %trim(QopCodeLO(x));
                 Else;
-                   x = %lookup(operator:ØdeclUP);
+                   x = %lookup(operator:QdeclUP);
                    If x > 0;
-                      newOperator = %trim(ØdeclLO(x));
+                      newOperator = %trim(QdeclLO(x));
                    Else;
                       // Not a valid operator, check if this is a comment.
                       x = %scan('//':%trim(sourceLine));
@@ -3945,7 +3945,7 @@
 
           ElseIf factor1 = *Blanks;
              // Straight move.
-             If %lookup(%xlate(lo:up:%trim(result)):ØopCodeUp) = 0;
+             If %lookup(%xlate(lo:up:%trim(result)):QopCodeUp) = 0;
                 sourceLine = %trim(result) + ' = ' + %trim(factor2) + ';';
              Else;
                 // Result is a reserved word - don't convert.
@@ -5410,11 +5410,11 @@
                 If not defsMoved;
                    // Log start of moved field block;
                    SRCDTA = *Blanks;
-                   codeLine = Øcomments(1);
+                   codeLine = Qcomments(1);
                    Exsr subUserWriteLine;
-                   codeLine = Øcomments(2);
+                   codeLine = Qcomments(2);
                    Exsr subUserWriteLine;
-                   codeLine = Øcomments(1);
+                   codeLine = Qcomments(1);
                    Exsr subUserWriteLine;
                    defsMoved = *On;
                 EndIf;
@@ -5433,11 +5433,11 @@
           If defsMoved;
              // Log end of moved field block;
              SRCDTA = *Blanks;
-             codeLine = Øcomments(1);
+             codeLine = Qcomments(1);
              Exsr subUserWriteLine;
-             codeLine = Øcomments(3);
+             codeLine = Qcomments(3);
              Exsr subUserWriteLine;
-             codeLine = Øcomments(1);
+             codeLine = Qcomments(1);
              Exsr subUserWriteLine;
           EndIf;
 
@@ -5501,15 +5501,15 @@
           // ** Place any program-specific exit code here.
           // >>>>> Start of User-Point >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-          If ØpShutDown <> 'Y';
+          If QpShutDown <> 'Y';
              Close QRPGLESRC;
              Close QRPGLESRC2;
           EndIf;
 
-          If ØpShutDown = 'Y' and initialCall <> 'Y';
+          If QpShutDown = 'Y' and initialCall <> 'Y';
              cfgCloseDown = 'Y';
              Write Z1ENDRPT;
-             Close CVTRPGFRP1;
+             Close CVTRPGFREP;
           EndIf;
 
           // <<<<< End of User-Point   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5550,21 +5550,21 @@
           // >>>>> Start of User-Point >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
           // Shut down?
-          If ØpShutDown = 'Y';
+          If QpShutDown = 'Y';
              Exsr subExitProgram;
           EndIf;
 
           // Open audit report.
           If initialCall = 'Y';
-             Open CVTRPGFRP1;
-             Z1ÅTTL = 'RPG/ILE to Free-Format Conversion Report';
+             Open CVTRPGFREP;
+             Z1QTTL = 'RPG/ILE to Free-Format Conversion Report';
              overflow = *On;
           EndIf;
 
-          fromFileLib = %trim(ØpFromLib) + '/' + %trim(ØpFromFile);
+          fromFileLib = %trim(QpFromLib) + '/' + %trim(QpFromFile);
           Open QRPGLESRC;
 
-          toFileLib = %trim(ØpToLib) + '/' + %trim(ØpToFile);
+          toFileLib = %trim(QpToLib) + '/' + %trim(QpToFile);
           Open QRPGLESRC2;
 
           Reset countSource;
@@ -5596,9 +5596,9 @@
 
        // -- Procedure Interface ------------------------------------------------------------------
        Dcl-PI GetDeclarationType;
-          ØpDeclType               Char( 2 );
-          ØpSavedName              Char( 80 );
-          ØpDeclLine                        Like(SRCSEQ);
+          QpDeclType               Char( 2 );
+          QpSavedName              Char( 80 );
+          QpDeclLine                        Like(SRCSEQ);
        End-PI;
 
        // -- Data Structures ----------------------------------------------------------------------
@@ -5614,50 +5614,50 @@
           If ((declExt = ' ' and declPrefix  = ' ')
           or declPrefix = 'S' or declPrefix = 'U')
           and declSuffix = ' ';
-             ØpDeclType = %xlate(lo:up:declType);
-             ØpSavedName = %trim(declName);
+             QpDeclType = %xlate(lo:up:declType);
+             QpSavedName = %trim(declName);
           Else;
-             ØpDeclType = *Blank;
-             ØpSavedName = %trim(%subst(fullLine:1:74));
+             QpDeclType = *Blank;
+             QpSavedName = %trim(%subst(fullLine:1:74));
           EndIf;
 
-          x = %scan(' ':ØpSavedName);
+          x = %scan(' ':QpSavedName);
           If x > 1;
-             ØpSavedName = %subst(ØpSavedName:1:x-1);
+             QpSavedName = %subst(QpSavedName:1:x-1);
           EndIf;
 
           // If we already have the declaration type, then stop.
-          If ØpDeclType = 'S'
-          or ØpDeclType = 'DS'
-          or ØpDeclType = 'C'
-          or ØpDeclType = 'B'
-          or ØpDeclType = 'E'
-          or ØpDeclType = 'PR'
-          or ØpDeclType = 'PI'
-          or ØpDeclType = *Blanks and inPrototype;
-             ØpDeclLine = SRCSEQ;
+          If QpDeclType = 'S'
+          or QpDeclType = 'DS'
+          or QpDeclType = 'C'
+          or QpDeclType = 'B'
+          or QpDeclType = 'E'
+          or QpDeclType = 'PR'
+          or QpDeclType = 'PI'
+          or QpDeclType = *Blanks and inPrototype;
+             QpDeclLine = SRCSEQ;
              Return;
           EndIf;
 
           savedSRCDTA = SRCDTA;
           savedLineType = %xlate(lo:up:lineType);      // Save current line type for comparison.
           x = 0;
-          ØpDeclLine = 0;
+          QpDeclLine = 0;
 
           //   // Name of the variable/routine should be on this line.
           //   savedName = %trim(declOptions);
 
           // Trim any ellipsis from the name as this is not valid in free-form.
-          x = %scan('...':ØpSavedName);
+          x = %scan('...':QpSavedName);
           If x > 0;
-             ØpSavedName = %subst(ØpSavedName:1:x-1);
+             QpSavedName = %subst(QpSavedName:1:x-1);
              x = 0;
           ElseIf declFrom <> *Blanks
               or declLen <> *Blanks
               or declOptions <> *BLanks;
              // It's not a declaration - it's a subfield.
-             ØpDeclType = %xlate(lo:up:declType);
-             ØpDeclLine = SRCSEQ;
+             QpDeclType = %xlate(lo:up:declType);
+             QpDeclLine = SRCSEQ;
              Return;
           EndIf;
 
@@ -5675,15 +5675,15 @@
 
              If declType <> *Blanks;
                 // We have found the declaration.
-                ØpDeclType = %xlate(lo:up:declType);
-                ØpDeclLine = SRCSEQ;
+                QpDeclType = %xlate(lo:up:declType);
+                QpDeclLine = SRCSEQ;
                 Leave;
              ElseIf declFrom <> *Blanks
                  or declLen <> *Blanks
                  or declOptions <> *BLanks;
                 // It's not a declaration - it's a subfield.
-                ØpDeclType = %xlate(lo:up:declType);
-                ØpDeclLine = SRCSEQ;
+                QpDeclType = %xlate(lo:up:declType);
+                QpDeclLine = SRCSEQ;
                 Leave;
              EndIf;
 
@@ -5717,9 +5717,9 @@
 
        // -- Procedure Interface ------------------------------------------------------------------
           Dcl-PI SplitLine;
-             ØpCurrentLine        VarChar(92);
-             ØpOverflow           VarChar(92);
-             ØpMaxLength           Packed( 3:0 ) CONST;
+             QpCurrentLine        VarChar(92);
+             QpOverflow           VarChar(92);
+             QpMaxLength           Packed( 3:0 ) CONST;
           End-PI;
 
        // -- Data Structures ----------------------------------------------------------------------
@@ -5729,18 +5729,18 @@
 
        //-------------------------------------------------------------------------------------------
 
-          ØpOverflow = *Blanks;
-          x = %len(%trim(ØpCurrentLine));
-          If x > ØpMaxLength;
-             x = ØpMaxLength;
+          QpOverflow = *Blanks;
+          x = %len(%trim(QpCurrentLine));
+          If x > QpMaxLength;
+             x = QpMaxLength;
           EndIf;
 
           // Scan backwards through the line, looking for a place to break it.
           For x = x downto 1;
-             If %scan(%subst(ØpCurrentLine:x:1):' ') > 0;
+             If %scan(%subst(QpCurrentLine:x:1):' ') > 0;
                 // Break here, and put the rest into a new line.
-                ØpOverflow = %subst(ØpCurrentLine:x);
-                ØpCurrentLine = %subst(ØpCurrentLine:1:x-1);
+                QpOverflow = %subst(QpCurrentLine:x);
+                QpCurrentLine = %subst(QpCurrentLine:1:x-1);
                 Leave;
              EndIf;
           EndFor;
@@ -5758,7 +5758,7 @@
 
        // -- Procedure Interface ------------------------------------------------------------------
           Dcl-PI AdjustArrayLength;
-          ØpLength               Packed( 7:0 );
+          QpLength               Packed( 7:0 );
           End-PI;
 
        // -- Data Structures ----------------------------------------------------------------------
@@ -5784,8 +5784,8 @@
                 j = %scan(')':declKeywords:i+4);
                 elements = %dec(%subst(declKeywords:i + 4:j - i - 4):7:0);
                 // Adjust the length of the variable.
-                If %rem(ØpLength:elements) = 0;
-                   ØpLength = %div(ØpLength:elements);
+                If %rem(QpLength:elements) = 0;
+                   QpLength = %div(QpLength:elements);
                 EndIf;
                 Leave;
              EndIf;
@@ -5832,7 +5832,7 @@
      O*                       SRCSEQ
      O*                       SRCDAT
      O*                       SRCDTA
-**CTDATA ØopCodeUP
+**CTDATA QopCodeUP
 ACQ       Acq
 BEGSR     BegSr
 CALLP     CallP
@@ -5899,7 +5899,7 @@ XMLSAX    XMLSAX
 ENDCS     ----------
 AND       and
 OR        or
-**CTDATA ØdeclUP
+**CTDATA QdeclUP
 DCL-F     Dcl-F
 DCL-S     Dcl-S
 DCL-C     Dcl-C
@@ -5912,7 +5912,7 @@ END-PR    End-PR
 END-PI    End-PI
 END-PROC  End-Proc
 CTL-OPT   Ctl-Opt
-**CTDATA Øcomments
+**CTDATA Qcomments
 //===========================================================================================
 // Start of moved field definitions.
 // End of moved field definitions.

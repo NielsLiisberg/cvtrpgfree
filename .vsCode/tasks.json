@@ -5,7 +5,7 @@
     "tasks": [
         {
             "label": "Compile current file",
-            "command": "ssh -t mensa 'PATH=/QOpenSys/pkgs/bin:$PATH;cd /prj/cvtrpgfree/;gmake ${fileBasename}'",
+            "command": "ssh -t mensa 'PATH=/QOpenSys/pkgs/bin:$PATH;cd /prj/cvtrpgfree/;gmake ${fileBasename} OUTPUT=*PRINT'",
             "type": "shell",
             "group": {
                 "kind": "build",

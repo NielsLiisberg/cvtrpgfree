@@ -9,15 +9,16 @@
 # the rpg modules and the binder source file are also created in BIN_LIB.
 # binder source file and rpg module can be remove with the clean step (make clean)
 BIN_LIB=CVTRPGFREE
+LIBLIST=$(BIN_LIB)
 DBGVIEW=*ALL
 TARGET_CCSID=*JOB
 SHELL=/QOpenSys/usr/bin/qsh
 OBJECT_DESCRIPTION=Convert to RPG free
-OUTPUT=*NONE
+OUTPUT=*PRINT
 RCFLAGS=OPTION(*NOUNREF) DBGVIEW(*LIST)  OUTPUT($(OUTPUT)) INCDIR('./..')
 SQLRPGCFLAGS=OPTION(*NOUNREF) DBGVIEW(*LIST)  OUTPUT($(OUTPUT)) INCDIR(''./..'')
-FILTER=| grep '*RNF' | grep -v '*RNF7031' | sed  "s!*!$<: &!"
-NOFILTER=>errorlist.txt
+FILTERXXX=| grep '*RNF' | grep -v '*RNF7031' | sed  "s!*!$<: &!"
+FILTER=>errorlist.txt
 
 # Do not touch below
 INCLUDE='/QIBM/include' 'headers/' 
@@ -34,7 +35,7 @@ CCFLAGSB=OPTION(*STDLOGMSG) OUTPUT(*print) OPTIMIZE(10) ENUM(*INT) TERASPACE(*YE
 
 # Dependency list
 
-all:  $(BIN_LIB).lib cvtrpgfree.obj 
+all:  $(BIN_LIB).lib nooutput cvtrpgfree.obj 
 
 cvtrpgfree.obj: cvtrpgfree.clle cvtrpgfree.cmd cvtrpgfree.prtf cvtrpgfree.rpgle  
 
@@ -55,10 +56,12 @@ cvtrpgfree.bnddir: cvtrpgfree.entry
 	system "CRTBNDC PGM($(BIN_LIB)/$(notdir $*)) SRCSTMF('src/$*.c') $(CCFLAGSB)"
 
 %.rpgle:
+	- system -q "CRTSRCPF FILE($(BIN_LIB)/QRPGLESRC)  RCDLEN(112)"
+	- system -q "CRTSRCPF FILE($(BIN_LIB)/QRPGLESRC2) RCDLEN(112)"
 	touch errorlist.txt ;\
 	setccsid 1252 errorlist.txt;\
 	liblist -a $(LIBLIST);\
-	setccsid 1252 $<;\
+	setccsid 1252 src/$*.rpgle;\
 	system -iK "CRTBNDRPG PGM($(BIN_LIB)/$(notdir $*)) SRCSTMF('src/$*.rpgle') $(RCFLAGS) TEXT('$(OBJECT_DESCRIPTION)')" $(FILTER) ;\
 	
 %.sqlrpgle:
@@ -85,7 +88,7 @@ cvtrpgfree.bnddir: cvtrpgfree.entry
 	system "CRTBNDCL pgm($(BIN_LIB)/$(notdir $*)) SRCSTMF('src/$*.clle') DBGVIEW($(DBGVIEW))"
 
 %.srvpgm:
-	-system -q "CRTSRCPF FILE($(BIN_LIB)/QSRVSRC) RCDLEN(112)"
+	system -q "CRTSRCPF FILE($(BIN_LIB)/QSRVSRC) RCDLEN(112)"
 	system "CPYFRMSTMF FROMSTMF('headers/$*.binder') TOMBR('/QSYS.lib/$(BIN_LIB).lib/QSRVSRC.file/$*.mbr') MBROPT(*replace)"
 	
 	# You may be wondering what this ugly string is. It's a list of objects created from the dep list that end with .c or .clle.
@@ -96,6 +99,9 @@ cvtrpgfree.bnddir: cvtrpgfree.entry
 
 all:
 	@echo Build success!
+
+nooutput:
+	OUTPUT=*NONE
 
 clean:
 	-system -q "DLTOBJ OBJ($(BIN_LIB)/*ALL) OBJTYPE(*FILE)"
