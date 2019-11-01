@@ -4,12 +4,9 @@ Convert RPG to free
 * Features:
 Non-destructive conversion: The utility converts the source from one member to a new member (the original source is left untouched), converting, where possible, fixed-format code to free-form code.
 
-
 Clearer, cleaner code: Free-form code (both new and existing) is indented to show nesting, and all opcodes are converted to a standard case format for consistency.
 
-
 Definition consolidation: All in-line field definitions are moved to 'D' specs. Duplicate definitions (which do not generate compiler errors when defined in fixed-format) are dropped to avoid confusion.
-
 
 Consistent free-form definitions: File, constant and variable declarations are converted to their free-form equivalents (see caveats in documentation).
 
@@ -23,3 +20,8 @@ An audit report is produced listing every source member processed by the utility
 
 * Mass conversion: 
 The utility can be run for all members of a source file, enabling the mass conversion of legacy code to the latest free-form version.
+
+
+# Thanx
+This project vas original started at SourceForge by Ewarwoowar - Thank you for all the good work.
+  
