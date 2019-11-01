@@ -40,7 +40,7 @@ all:  $(BIN_LIB).lib nooutput cvtrpgfree.obj
 cvtrpgfree.obj: cvtrpgfree.clle cvtrpgfree.cmd cvtrpgfree.prtf cvtrpgfree.rpgle  
 
 cvtrpgfree.bnddir: cvtrpgfree.entry
-
+ 
 #-----------------------------------------------------------
 
 %.lib:
