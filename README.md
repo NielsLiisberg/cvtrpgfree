@@ -33,9 +33,9 @@ your code forward.
 
 
 ### vsCode
-This repo includes the .vsCode folder that makes it easyc  to just build 
-the package and compile the programs. However you need to xhange 
-references in task.js file to point to your IBM i.
+This repo includes the .vsCode folder that makes it easy to build 
+the package and compile the programs. However you need to change 
+references in task.json file to point to your IBM i.
 
 
 ### Features:
@@ -59,6 +59,6 @@ An audit report is produced listing every source member processed by the utility
 The utility can be run for all members of a source file, enabling the mass conversion of legacy code to the latest free-form version.
 
 
-# Thanx
+### Thanx
 This project vas original started at SourceForge by Ewarwoowar - Thank you for all the good work.
   
