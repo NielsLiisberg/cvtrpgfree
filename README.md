@@ -3,7 +3,19 @@ Convert RPG to free
 
 
 ### Installation
-What you need before you start:
+You can build this packages from scratch by following the 
+description below. Also you will find a cvtrpgfree.savf in the 
+release folder. This will instal the binary if you put download and put th savefile
+on your IFS:
+
+```
+CRTLIB CVTRPGFREE
+CPYFRMSTMF FROMSTMF('./release/cvtrpgfree.savf') TOMBR('/QSYS.lib/CVTRPGFREE.lib/CVTRPGFREE.FILE') MBROPT(*REPLACE) CVTDTA(*NONE)
+RSTLIB SAVLIB(CVTRPGFREE) DEV(*SAVF) SAVF(CVTRPGFREE/CVTRPGFREE)
+```
+
+
+What you need before you start to build it:
 
 * IBM i 7.3 TR3 (or higher)
 * YUM installed from ACS (to install: git and make-gnu (gmake))
