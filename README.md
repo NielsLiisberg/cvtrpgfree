@@ -5,7 +5,7 @@ Convert RPG to free
 ### Installation
 You can build this packages from scratch by following the 
 description below. Also you will find a cvtrpgfree.savf in the 
-release folder. This will instal the binary if you put download and put th savefile
+release folder. This will instal the binary if you download and put the savefile
 on your IFS:
 
 ```
