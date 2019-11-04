@@ -35,11 +35,8 @@ CCFLAGSB=OPTION(*STDLOGMSG) OUTPUT(*print) OPTIMIZE(10) ENUM(*INT) TERASPACE(*YE
 
 # Dependency list
 
-all:  $(BIN_LIB).lib nooutput cvtrpgfree.obj 
+all:  $(BIN_LIB).lib nooutput cvtrpgfree.clle cvtrpgfree.cmd cvtrpgFreP.prtf cvtrpgfreR.rpgle  
 
-cvtrpgfree.obj: cvtrpgfree.clle cvtrpgfree.cmd cvtrpgfree.prtf cvtrpgfree.rpgle  
-
-cvtrpgfree.bnddir: cvtrpgfree.entry
  
 #-----------------------------------------------------------
 
@@ -83,18 +80,10 @@ cvtrpgfree.bnddir: cvtrpgfree.entry
 
 %.clle:
 	system -q "CHGATR OBJ('src/$*.clle') ATR(*CCSID) VALUE(1252)"
-#-system -q "CRTSRCPF FILE($(BIN_LIB)/QCLLESRC) RCDLEN(132)"
-#	system "CPYFRMSTMF FROMSTMF('src/$*.clle') TOMBR('/QSYS.lib/$(BIN_LIB).lib/QCLLESRC.file/$(notdir $*).mbr') MBROPT(*REPLACE)"
-	system "CRTBNDCL pgm($(BIN_LIB)/$(notdir $*)) SRCSTMF('src/$*.clle') DBGVIEW($(DBGVIEW))"
+	-system -q "CRTSRCPF FILE($(BIN_LIB)/QCLLESRC) RCDLEN(132)"
+	system "CPYFRMSTMF FROMSTMF('src/$*.clle') TOMBR('/QSYS.lib/$(BIN_LIB).lib/QCLLESRC.file/$(notdir $*).mbr') MBROPT(*REPLACE)"
+	system "CRTBNDCL pgm($(BIN_LIB)/$(notdir $*))  SRCFILE($(BIN_LIB)/QclleSRC) DBGVIEW($(DBGVIEW))"
 
-%.srvpgm:
-	system -q "CRTSRCPF FILE($(BIN_LIB)/QSRVSRC) RCDLEN(112)"
-	system "CPYFRMSTMF FROMSTMF('headers/$*.binder') TOMBR('/QSYS.lib/$(BIN_LIB).lib/QSRVSRC.file/$*.mbr') MBROPT(*replace)"
-	
-	# You may be wondering what this ugly string is. It's a list of objects created from the dep list that end with .c or .clle.
-	$(eval modules := $(patsubst %,$(BIN_LIB)/%,$(basename $(filter %.c %.clle,$(notdir $^)))))
-	
-	system -q -kpieb "CRTSRVPGM SRVPGM($(BIN_LIB)/$*) MODULE($(modules)) SRCFILE($(BIN_LIB)/QSRVSRC) ACTGRP(QILE) ALWLIBUPD(*YES) TGTRLS(*current)"
 
 
 all:
@@ -103,20 +92,17 @@ all:
 nooutput:
 	OUTPUT=*NONE
 
-clean:
-	-system -q "DLTOBJ OBJ($(BIN_LIB)/*ALL) OBJTYPE(*FILE)"
-	-system -q "DLTOBJ OBJ($(BIN_LIB)/*ALL) OBJTYPE(*MODULE)"
 	
-release: clean
+release: nooutput
 	@echo " -- Creating cvtrpgfree release. --"
 	@echo " -- Creating save file. --"
+	-system "dltf  FILE($(BIN_LIB)/cvtrpgfree)"
 	system "CRTSAVF FILE($(BIN_LIB)/cvtrpgfree)"
-	system "SAVLIB LIB($(BIN_LIB)) DEV(*SAVF) SAVF($(BIN_LIB)/cvtrpgfree) OMITOBJ((RELEASE *FILE))"
+	system "SAVLIB LIB($(BIN_LIB)) DEV(*SAVF) SAVF($(BIN_LIB)/cvtrpgfree)"
 	-rm -r release
 	-mkdir release
 	system "CPYTOSTMF FROMMBR('/QSYS.lib/$(BIN_LIB).lib/CVTRPGFREE.FILE') TOSTMF('./release/cvtrpgfree.savf') STMFOPT(*REPLACE) STMFCCSID(1252) CVTDTA(*NONE)"
 	@echo " -- Cleaning up... --"
-	system "DLTOBJ OBJ($(BIN_LIB)/cvtrpgfree) OBJTYPE(*FILE)"
 	@echo " -- Release created! --"
 	@echo ""
 	@echo "To install the release, run:"
@@ -124,11 +110,3 @@ release: clean
 	@echo "  > CPYFRMSTMF FROMSTMF('./release/cvtrpgfree.savf') TOMBR('/QSYS.lib/$(BIN_LIB).lib/CVTRPGFREE.FILE') MBROPT(*REPLACE) CVTDTA(*NONE)"
 	@echo "  > RSTLIB SAVLIB($(BIN_LIB)) DEV(*SAVF) SAVF($(BIN_LIB)/CVTRPGFREE)"
 	@echo ""
-
-# For vsCode / single file then i.e.: gmake current sqlio.c  
-current: 
-	system -i "CRTCMOD MODULE($(BIN_LIB)/$(SRC)) SRCSTMF('src/$(SRC).c') $(CCFLAGS2) "
-
-# For vsCode / single file then i.e.: gmake current sqlio.c  
-example: 
-	system -i "CRTBNDRPG PGM($(BIN_LIB)/$(SRC)) SRCSTMF('examples/$(SRC).rpgle') DBGVIEW(*ALL)" > error.txt

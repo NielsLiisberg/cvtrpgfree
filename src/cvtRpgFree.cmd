@@ -10,34 +10,34 @@
 /*H: CPP       : CVTRPGFREC                                         */
 /*H:                                                                */
 /********************************************************************/
-             CMD        PROMPT('CONVERT RPG/ILE TO FREE-FORM')
+             CMD        PROMPT('Convert rpg/ile to free-form')
 
              PARM       KWD(FROMMBR) TYPE(*NAME) SPCVAL((*ALL)) MIN(1) +
-                          PROMPT('FROM MEMBER')
+                          PROMPT('From member')
 
-             PARM       KWD(FROMFILE) TYPE(FRMFILE) PROMPT('FROM FILE')
+             PARM       KWD(FROMFILE) TYPE(FRMFILE) PROMPT('From file')
  FRMFILE:    QUAL       TYPE(*NAME) DFT(QRPGLESRC) SPCVAL((QRPGLESRC)) +
                           EXPR(*YES)
              QUAL       TYPE(*NAME) DFT(*LIBL) SPCVAL((*CURLIB) (*LIBL)) +
-                          EXPR(*YES) PROMPT('LIBRARY')
+                          EXPR(*YES) PROMPT('Library')
 
-             PARM       KWD(TOFILE) TYPE(TOFILE) PROMPT('TO FILE')
+             PARM       KWD(TOFILE) TYPE(TOFILE) PROMPT('To file')
  TOFILE:     QUAL       TYPE(*NAME) LEN(10) DFT(QRPGLESRC)
              QUAL       TYPE(*NAME) DFT(*FROMLIB) SPCVAL((*FROMLIB) +
-                          (*CURLIB) (*LIBL)) PROMPT('LIBRARY')
+                          (*CURLIB) (*LIBL)) PROMPT('Library')
 
              PARM       KWD(TOMBR) TYPE(*NAME) DFT(*FROMMBR) +
-                          SPCVAL((*FROMMBR)) PROMPT('TO MEMBER')
+                          SPCVAL((*FROMMBR)) PROMPT('To member')
 
 
              PARM       KWD(INDCMT) TYPE(*CHAR) LEN(1) RSTD(*YES) DFT(Y) +
-                          VALUES(Y N) PMTCTL(*PMTRQS) PROMPT('INDENT +
-                          COMMENTS')
+                          VALUES(Y N) PMTCTL(*PMTRQS) PROMPT('Indent +
+                          comments')
 
              PARM       KWD(RETBLKCMT) TYPE(*CHAR) LEN(1) RSTD(*YES) +
                           DFT(N) VALUES(Y N) CASE(*MONO) PMTCTL(*PMTRQS) +
-                          PROMPT('RETAIN BLANK COMMENT MARKERS')
+                          PROMPT('Retain blank comment markers')
 
              PARM       KWD(DIRECTIVES) TYPE(*CHAR) LEN(1) RSTD(*YES) +
                           DFT(N) VALUES(Y N) CASE(*MONO) PMTCTL(*PMTRQS) +
-                          PROMPT('USE /FREE COMPILER DIRECTIVES')
+                          PROMPT('Use /free compiler directives')
