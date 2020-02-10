@@ -8,6 +8,9 @@
        // Program Description . : Convert RPGILE Source Member to Free-form
        // Date Created. . . . . : 30/04/2015
        // Programmer. . . . . . : Ewarwoowar
+       // 
+       // By             Date        Fix
+       // Niels Liisberg 10.02.2020  Support for source more that 999 lines of code
        //-------------------------------------------------------------------------------------------
        // SYNOPSIS :
        // - Reads through an RPGILE source member and reformats the contents.
@@ -199,20 +202,20 @@
        Dcl-S QdeclUP               Char(10) DIM(12) PERRCD(1) CTDATA;
        Dcl-S QdeclLO               Char(10) DIM(12) ALT(QdeclUP);
        Dcl-S Qcomments             Char(92) DIM(3) CTDATA;
-       Dcl-S x                   Packed(3:0);
-       Dcl-S y                   Packed(3:0);
-       Dcl-S i                   Packed(3:0);
-       Dcl-S j                   Packed(3:0);
+       Dcl-S x                   Packed(5:0);
+       Dcl-S y                   Packed(5:0);
+       Dcl-S i                   Packed(5:0);
+       Dcl-S j                   Packed(5:0);
        Dcl-S blanks                Char(30) INZ(*Blanks);
-       Dcl-S maxIndent           Packed(3:0) INZ(15);
-       Dcl-S movedDefs                 LIKE(result) DIM(999);
+       Dcl-S maxIndent           Packed(5:0) INZ(15);
+       Dcl-S movedDefs                 LIKE(result) DIM(9999);
        Dcl-S moveDef                Ind INZ(*Off);
 
        Dcl-S fromFileLib           Char(21);
        Dcl-S toFileLib             Char(21);
 
        Dcl-S operator              Char(10);
-       Dcl-S operatorEnd         Packed(3:0);
+       Dcl-S operatorEnd         Packed(5:0);
        Dcl-S newOperator        VarChar(10);
        Dcl-S nonConvRsn                LIKE(codeLine);
 
@@ -244,13 +247,13 @@
        Dcl-S savedLineType         Char(1);
 
        Dcl-S increment           Packed(1:0) INZ(0);
-       Dcl-S indentCount         Packed(3:0) INZ(0);
+       Dcl-S indentCount         Packed(5:0) INZ(0);
        Dcl-S indentSize          Packed(1:0) INZ(3);
-       Dcl-S indentOffset        Packed(3:0) INZ(0);
-       Dcl-S prevOffset          Packed(3:0) INZ(0);
-       Dcl-S currOffset          Packed(3:0) INZ(0);
-       Dcl-S lineEnd             Packed(3:0) INZ(0);
-       Dcl-S mainlineIndent      Packed(3:0) INZ(1);
+       Dcl-S indentOffset        Packed(5:0) INZ(0);
+       Dcl-S prevOffset          Packed(5:0) INZ(0);
+       Dcl-S currOffset          Packed(5:0) INZ(0);
+       Dcl-S lineEnd             Packed(5:0) INZ(0);
+       Dcl-S mainlineIndent      Packed(5:0) INZ(1);
 
        Dcl-S savedSRCDTA               LIKE(SRCDTA);
        Dcl-S sourceLine            Char(93);
@@ -272,7 +275,7 @@
        Dcl-S workFileAdd           Char(1);
        Dcl-S workFileKeyed         Char(1);
        Dcl-S workFileDevice        Char(7);
-       Dcl-S checkLength         Packed(3:0);
+       Dcl-S checkLength         Packed(5:0);
        Dcl-S workLength          Packed(7:0);
 
        Dcl-S savedComment          Char(20);
@@ -310,7 +313,7 @@
 
        Dcl-S catFactor1                LIKE(factor1);
        Dcl-S catFactor2                LIKE(factor2);
-       Dcl-S catCount            Packed(3:0) INZ(0);
+       Dcl-S catCount            Packed(5:0) INZ(0);
        Dcl-S catBlanks                 LIKE(factor2);
 
        Dcl-S durDuration               LIKE(factor2);
@@ -319,11 +322,11 @@
 
        Dcl-S inEval                 Ind INZ(*Off);
        Dcl-S evalOperator              Like(opCode);
-       Dcl-S evalOffset          Packed(3:0);
+       Dcl-S evalOffset          Packed(5:0);
 
        Dcl-S inCallP                Ind INZ(*Off);
        Dcl-S callPOperator             Like(opCode);
-       Dcl-S callPOffset         Packed(3:0);
+       Dcl-S callPOffset         Packed(5:0);
 
        Dcl-S inDo                   Ind INZ(*Off);
        Dcl-S doOperator                Like(opCode);
@@ -339,16 +342,16 @@
 
        Dcl-S inSQL                  Ind INZ(*Off);
 
-       Dcl-S forCount            Packed(3:0) INZ(0);
-       Dcl-S forLevel            Packed(3:0) DIM(99);                          // Allow for 99
+       Dcl-S forCount            Packed(5:0) INZ(0);
+       Dcl-S forLevel            Packed(5:0) DIM(99);                          // Allow for 99
        Dcl-S forFactor1                LIKE(factor1);
        Dcl-S forFactor2                LIKE(factor2);
 
-       Dcl-S doCount             Packed(3:0) INZ(0);
-       Dcl-S doLevel             Packed(3:0) DIM(99);                          // Allow for 99
+       Dcl-S doCount             Packed(5:0) INZ(0);
+       Dcl-S doLevel             Packed(5:0) DIM(99);                          // Allow for 99
 
-       Dcl-S slCount             Packed(3:0) INZ(0);
-       Dcl-S slLevel             Packed(3:0) DIM(99);                          // Allow for 99
+       Dcl-S slCount             Packed(5:0) INZ(0);
+       Dcl-S slLevel             Packed(5:0) DIM(99);                          // Allow for 99
 
        Dcl-S divFactor1                LIKE(factor1);
        Dcl-S divFactor2                LIKE(factor2);

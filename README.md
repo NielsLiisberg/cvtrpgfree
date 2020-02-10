@@ -73,4 +73,7 @@ The utility can be run for all members of a source file, enabling the mass conve
 
 ### Thanx
 This project vas original started at SourceForge by Ewarwoowar - Thank you for all the good work.
+
+Have fun!
+Niels Liisberg 2019
   
