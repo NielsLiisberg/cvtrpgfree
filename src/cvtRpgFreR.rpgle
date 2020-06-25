@@ -1711,6 +1711,8 @@
                    DCLS.type = 'TimeStamp';
                 ElseIf workDeclAttr = 'I';
                    DCLS.type = '      Int';
+                ElseIf workDeclAttr = 'U';
+                   DCLS.type = '      Uns';
                 ElseIf workDeclAttr = 'S';
                    DCLS.type = '    Zoned';
                 ElseIf workDeclAttr = 'N';
