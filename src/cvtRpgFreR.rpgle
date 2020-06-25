@@ -1974,6 +1974,8 @@
                    DCLPR.type = 'TimeStamp';
                 ElseIf workDeclAttr = 'I';
                    DCLPR.type = '      Int';
+                ElseIf workDeclAttr = 'U';
+                   DCLPR.type = '      Uns';
                 ElseIf workDeclAttr = 'S';
                    DCLPR.type = '    Zoned';
                 ElseIf workDeclAttr = 'N';
